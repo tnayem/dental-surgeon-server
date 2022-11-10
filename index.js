@@ -18,12 +18,12 @@ async function run(){
         const myServiceCollection = client.db("dentalDoctor").collection("dentalService");
         // get data from database
         // http://localhost:5000/services
-        app.get('/services', async(req,res)=>{
-            const query = {};
-            const cursor = serviceCollection.find(query);
-            const services = await cursor.toArray();
-            res.send(services);
-        })
+        // app.get('/services', async(req,res)=>{
+        //     const query = {};
+        //     const cursor = serviceCollection.find(query);
+        //     const services = await cursor.toArray();
+        //     res.send(services);
+        // })
         // get limit data from database
         // http://localhost:5000/service
         // app.get('/service', async(req,res)=>{
@@ -44,7 +44,7 @@ async function run(){
         //Get Limit Data from database
         app.get('/doctorService',async(req,res)=>{
             const query ={}
-            const cursor = serviceCollection.find(query).sort({"title":1})
+            const cursor = myServiceCollection.find(query).sort({"title":1})
             const result = await cursor.limit(3).toArray();
             res.send(result)
         })
