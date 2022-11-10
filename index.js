@@ -14,27 +14,10 @@ console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run(){
     try{
-        const serviceCollection = client.db("dentalSurgeon").collection("services");
+        // const serviceCollection = client.db("dentalSurgeon").collection("services");
         const myServiceCollection = client.db("dentalDoctor").collection("dentalService");
+        const allReview = client.db("dentalDoctor").collection('review');
         // get data from database
-        // http://localhost:5000/services
-        // app.get('/services', async(req,res)=>{
-        //     const query = {};
-        //     const cursor = serviceCollection.find(query);
-        //     const services = await cursor.toArray();
-        //     res.send(services);
-        // })
-        // get limit data from database
-        // http://localhost:5000/service
-        // app.get('/service', async(req,res)=>{
-        //     const query = {};
-        //     const cursor = serviceCollection.find(query);
-        //     const services = await cursor.limit(3).toArray();
-        //     res.send(services);
-        // })
-        //Get Limit data from database
-        
-        // add data from database
         app.get('/doctorServices',async(req,res)=>{
             const query = {};
             const cursor = myServiceCollection.find(query).sort({"title":1})
@@ -44,7 +27,7 @@ async function run(){
         //Get Limit Data from database
         app.get('/doctorService',async(req,res)=>{
             const query ={}
-            const cursor = myServiceCollection.find(query).sort({"title":1})
+            const cursor = myServiceCollection.find(query).sort({"title":-1})
             const result = await cursor.limit(3).toArray();
             res.send(result)
         })
@@ -60,6 +43,31 @@ async function run(){
             const result = await myServiceCollection.insertOne(req.body);
             res.send(result);
         })
+        // get spacific order from database
+        app.get('/reviews',async(req,res)=>{
+            let query = {}
+            if(req.query.email){
+                query={
+                    email:req.query.email
+                }
+            }
+            const cursor = allReview.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        // delate
+        app.delete('/reviews/:id',async(req,res)=>{
+            const id = req.params.id
+            const query = {_id:ObjectId(id)}
+            const result = await allReview.deleteOne(query)
+            res.send(result)
+        })
+        // create review from clint site
+        app.post('/reviews',async(req,res)=>{
+            const result = await allReview.insertOne(req.body);
+            res.send(result);
+        })
+        
     }finally{
 
     }
